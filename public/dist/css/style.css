@@ -1,0 +1,33 @@
+.tontine-card .font {
+    font-size: clamp(9px, 2vw, 16px);
+}
+
+.tontine-card .date {
+    font-size: clamp(9px, 2vw, 12px);
+}
+
+.tontine-card .progress {
+    height: 10px;
+}
+
+.tontine-card .badge {
+    font-size: clamp(9px, 2vw, 12px);
+    padding: 0.25rem 0.75rem;
+}
+
+.tontine-card .progress-bar {
+    border-radius: 0;
+}
+
+#home #amount-contribution-taken .font-title,  .font-title{
+    font-size: clamp(14px, 2vw, 20px);
+}
+
+#home .font-label,
+#home legend {
+    font-size: clamp(14px, 2vw, 16px);
+}
+
+#home #amount-contribution-taken .font-sub-title {
+    font-size: clamp(12px, 2vw, 16px);
+}

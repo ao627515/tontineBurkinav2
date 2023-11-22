@@ -1,5 +1,7 @@
 <?php
 
+use App\Livewire\Home;
+use App\Livewire\ShowTontine;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +15,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('home');
-});
+Route::get('/', Home::class)->name('home');
+Route::get('/tontine/{tontine}', ShowTontine::class)->name('tontine.show');

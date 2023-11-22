@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @yield('meta')
+
     <title>@yield('title')</title>
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
@@ -14,10 +15,11 @@
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
     <!-- css custom -->
+    <link rel="stylesheet" href="{{ asset('dist/css/style.css') }}">
     @yield('css')
 </head>
 
-<body class="sidebar-mini-xs layout-fixed" style="height: auto;">
+<body class="sidebar-mini-xs layout-fixed layout-navbar-fixed" style="height: auto;">
     <!-- Site wrapper -->
     <div class="wrapper">
         <!-- Navbar -->
@@ -25,7 +27,7 @@
         <!-- /.navbar -->
 
         <!-- Main Sidebar Container -->
-        @include('includes.sidebar')
+        <livewire:sidebar />
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper" style="min-height: 628.4px;">
