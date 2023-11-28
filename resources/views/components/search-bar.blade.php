@@ -1,8 +1,8 @@
 <div>
-    <div class="input-group input-group-lg">
-    <input {{ $attributes }} type="search" name="search" id="search" class="form-control form-control-lg @error('description') is-invalid @enderror" placeholder="Type your keywords here">
+    <div class="input-group">
+        <input {{ $attributes }} type="search" class="form-control @error('search') is-invalid @enderror">
         <div class="input-group-append">
-            <button type="submit" class="btn btn-lg btn-default">
+            <button type="submit" class="btn btn-default px-3">
                 <i class="fa fa-search"></i>
             </button>
         </div>

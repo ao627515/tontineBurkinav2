@@ -22,7 +22,8 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->enum('status', ['creating', 'ongoing', 'suspended', 'completed'])->default('creating');
             $table->text('suspension_reason')->nullable();
-            $table->timestamp('suspension_date')->nullable();
+            $table->timestamp('started_at')->nullable();
+            $table->timestamp('suspension_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->foreignUuid('user_id')->nullable()->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();

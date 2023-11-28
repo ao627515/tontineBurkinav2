@@ -10,7 +10,7 @@
                     <h5 class="font mb-1">Membres : {{ $tontine->number_of_members }}</h5>
                     <h5 class="font mb-1">Période : {{ $tontine->delay . ' ' . $tontine->delay_unity }}</h5>
                     <div class="font">
-                        <x-badge class="py-1 px-3" :type="$conf['type']" variant="pill">{{ $conf['status'] }}</x-badge>
+                        <x-badge class="py-1 px-3" :type="$tontine->getStatusBadgeColor()" variant="pill">{{ $tontine->getStatus() }}</x-badge>
                     </div>
                 </div>
             </div>

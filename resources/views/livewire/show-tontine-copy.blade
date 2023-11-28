@@ -1,14 +1,4 @@
 <div id="show-tontine">
-    @if (session('success'))
-        <x-alert class="alert alert-success" :dismissible='true'>
-            {{ session('success') }}
-        </x-alert>
-    @endif
-    @if (session('error'))
-        <x-alert class="alert alert-danger" :dismissible='true'>
-            {{ session('error') }}
-        </x-alert>
-    @endif
     <div class="card">
         @if ($tontineInfo)
             <div class="card-body px-5">
@@ -43,19 +33,16 @@
                             </li>
                             @if ($tontine->isStarted())
                                 <li class="nav-item py-2">
-                                    Débute le <span
-                                        class="float-right badge bg-primary">{{ App\Models\Tontine::dateFormat($tontine->started_at) }}</span>
+                                    Débute le <span class="float-right badge bg-primary">20 octobre 2023</span>
                                 </li>
                                 <li class="nav-item py-2">
-                                    Date de Fin <span
-                                        class="float-right badge bg-info">{{ $tontine->finished_at() }}</span>
+                                    Date de Fin <span class="float-right badge bg-info">2024-04-12</span>
                                 </li>
                                 <li class="nav-item py-2 text-center">
-                                    <span>Il reste {{ $tontine->remainingTimeInDays() }} jours</span>
+                                    <span>Il reste 10 jours</span>
                                     <div class="progress rounded-pill mx-2">
                                         <div class="progress-bar bg-success" role="progressbar" aria-valuenow="25"
-                                            aria-valuemin="0" aria-valuemax="100"
-                                            style="width: {{ $tontine->progress() }}%">
+                                            aria-valuemin="0" aria-valuemax="100" style="width: 50%">
                                         </div>
                                     </div>
                                 </li>
@@ -78,13 +65,13 @@
                 <div class="card-header p-0 border-bottom-0">
                     <ul class="nav nav-tabs" id="show-tontine-tabBar" role="tablist">
                         <li class="nav-item w-50 text-center">
-                            <a wire:click="changePage('tontine-participants')"
+                            <a x-on:click="$wire.set('page', 'tontine-participants')"
                                 class="nav-link @if ($page == 'tontine-participants') active @endif"
                                 id="tontine-participants-tab" data-toggle="pill" href="#tontine-participants"
                                 role="tab" aria-controls="tontine-participants" aria-selected="true">Participant</a>
                         </li>
                         <li class="nav-item w-50 text-center">
-                            <a wire:click="changePage('tontine-contributions')"
+                            <a x-on:click="$wire.set('page', 'tontine-contributions')"
                                 class="nav-link @if ($page == 'tontine-contributions') active @endif"
                                 id="tontine-contributions-tab" data-toggle="pill" href="#tontine-contributions"
                                 role="tab" aria-controls="tontine-contributions" aria-selected="false">Prise de la
@@ -94,7 +81,7 @@
                 </div>
                 <div class="card-body">
                     <div class="tab-content" id="show-tontine-tabBarContent">
-                        <div class="tab-pane fade @if ($page == 'tontine-participants') show active @endif"
+                        <div class="tab-pane fade @if ($page == 'tontine-participants' or $page == 'tontine-participants-starting') show active @endif"
                             id="tontine-participants" role="tabpanel" aria-labelledby="tontine-participants-tab">
                             <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-3">
                                 @forelse ($tontine->participants as $participant)
@@ -125,13 +112,10 @@
         </div>
     </div>
     {{-- @include('includes.tontine-participants-modal') --}}
-    @switch($modalOpen)
-        @case('add-participant')
-            @include('includes.tontine-participants-modal')
-        @break
 
-        @case('start-tontine')
-            @include('includes.startTontine-modal')
+    @switch($modalOpen)
+        @case($callActionModal)
+            @include('includes.tontine-participants-modal')
         @break
 
         @default

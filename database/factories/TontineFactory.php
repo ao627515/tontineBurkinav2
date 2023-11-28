@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -26,7 +27,7 @@ class TontineFactory extends Factory
             'delay' => fake()->numberBetween(1, 30),
             'delay_unity' => fake()->randomElement(['day', 'week', 'month', 'year']),
             'amount' => $amount,
-            'number_of_members' => fake()->numberBetween(5, 20),
+            'number_of_members' => fake()->numberBetween(5,6),
             'description' => fake()->paragraph,
             'status' => 'creating',
             // 'status' => fake()->randomElement(['creating', 'ongoing', 'suspended', 'completed']),
@@ -35,9 +36,7 @@ class TontineFactory extends Factory
             'created_at' => now(),
             'updated_at' => now(),
             'deleted_at' => null, // Soft delete field
-            // 'user_id' => function () {
-            //     return factory(App\User::class)->create()->id;
-            // },
+            'user_id' => User::first()->id
         ];
     }
 }

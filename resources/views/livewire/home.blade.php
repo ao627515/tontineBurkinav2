@@ -1,12 +1,10 @@
 <div id="home">
-    @section('title', 'Mes Tontines')
-
     <div class="card">
         <div class="card-header bg-light d-flex justify-content-end px-5">
             <button class="btn btn-primary" wire:click="openModal">Créer une tontine</button>
         </div>
         <div class="card-header bg-light px-5">
-            <x-search-bar wire:model.live.debounce.500ms='search' />
+            <x-search-bar wire:model.live.debounce.500ms='search' name='search' placeholder='Nom de la tontine'/>
         </div>
 
         <div class="card-body">

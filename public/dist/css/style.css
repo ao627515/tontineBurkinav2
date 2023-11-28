@@ -24,10 +24,38 @@
 }
 
 #home .font-label,
-#home legend {
+#home legend , #show-tontine legend{
     font-size: clamp(14px, 2vw, 16px);
 }
 
 #home #amount-contribution-taken .font-sub-title {
     font-size: clamp(12px, 2vw, 16px);
+}
+
+#show-tontine .tontine-participant-card .font-title,
+#show-tontine .participant-card .font-title{
+    font-size: clamp(10px, 2vw, 16px);
+}
+
+#show-tontine .tontine-participant-card .font-sub-title,
+#show-tontine .participant-card .font-sub-title{
+    font-size: clamp(10px, 2vw, 14px);
+}
+#show-tontine .tontine-participant-card .font-sub-sub-title,
+#show-tontine .participant-card .font-sub-sub-title{
+    font-size: clamp(6px, 2vw, 12px);
+}
+
+#show-tontine .tontine-participant-card-body .progress{
+    height: clamp(2px, 2vw, 10px);
+}
+
+#show-tontine .icon-close{
+    position: relative;
+    left: 48%;
+    font-size: 2rem;
+}
+
+#show-tontine .participant-card.active{
+    background-color: #ff851b;
 }

@@ -7,6 +7,7 @@ use Livewire\Component;
 use Livewire\Attributes\Url;
 use App\Livewire\TontineList;
 use App\Livewire\Forms\TontineForm;
+use Livewire\Attributes\Title;
 
 class Home extends Component
 {
@@ -19,7 +20,11 @@ class Home extends Component
 
     public $title = "Mes tontines";
 
+    public function mount(){
+        $this->dispatch('sendPageName', pageName: $this->title)->to('Navbar');
+    }
 
+    #[Title('Mes tontines')]
     public function render()
     {
         $delay_unity = ['day' => 'Jour', 'week' => 'Semaine', 'month' => "Mois", 'year' => 'Année'];

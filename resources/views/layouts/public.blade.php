@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @yield('meta')
 
-    <title>@yield('title')</title>
+    <title>{{ $title ?? 'Page Title' }}</title>
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -18,12 +18,13 @@
     <link rel="stylesheet" href="{{ asset('dist/css/style.css') }}">
     @yield('css')
 </head>
-
-<body class="sidebar-mini-xs layout-fixed layout-navbar-fixed" style="height: auto;">
+{{-- sidebar-mini-xs --}}
+<body class=" layout-fixed layout-navbar-fixed" style="height: auto;">
     <!-- Site wrapper -->
     <div class="wrapper">
         <!-- Navbar -->
-        @include('includes.navabar')
+        {{-- @include('includes.navabar') --}}
+        @livewire('navbar')
         <!-- /.navbar -->
 
         <!-- Main Sidebar Container -->
@@ -48,7 +49,7 @@
     <!-- AdminLTE App -->
     <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
     <!--js customer-->
-    @yield('script')
+    @yield('scripts')
 </body>
 
 </html>
