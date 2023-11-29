@@ -11,15 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        
+        Schema::create('tontine_payments', function (Blueprint $table) {
+            $table->id();
+            $table->foreignUuid('tontine_id');
+            $table->foreignUuid('participant_id');
+            $table->timestamp('created_at');
+        });
     }
-
-    /*
-     	date
-        tontine_id
-        participant_id
-
-     */
 
     /**
      * Reverse the migrations.

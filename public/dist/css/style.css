@@ -33,16 +33,19 @@
 }
 
 #show-tontine .tontine-participant-card .font-title,
-#show-tontine .participant-card .font-title{
+#show-tontine .participant-card .font-title,
+#show-tontine .payment-card .font-title{
     font-size: clamp(10px, 2vw, 16px);
 }
 
 #show-tontine .tontine-participant-card .font-sub-title,
-#show-tontine .participant-card .font-sub-title{
+#show-tontine .participant-card .font-sub-title,
+#show-tontine .payment-card .font-sub-title{
     font-size: clamp(10px, 2vw, 14px);
 }
 #show-tontine .tontine-participant-card .font-sub-sub-title,
-#show-tontine .participant-card .font-sub-sub-title{
+#show-tontine .participant-card .font-sub-sub-title,
+#show-tontine .payment-card .font-sub-sub-title{
     font-size: clamp(6px, 2vw, 12px);
 }
 

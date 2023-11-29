@@ -19,31 +19,9 @@
                 <h5 class="font-title mb-1">{{ $participant->last_name . ' ' . $participant->first_name }}</h5>
                 <h6 class="font-sub-title mb-1">+226 {{ $participant->phone_number }}</h6>
                 @if ($forTontine)
-                    <x-badge class="font-sub-sub-title" :type="'success'" variant="pill">Statut</x-badge>
+                    <x-badge class="font-sub-sub-title" :type="$badgeType" variant="pill">{{ $status }}</x-badge>
                 @endif
             </div>
         </div>
     </div>
 </div>
-
-
-    {{-- <script>
-        $(document).ready(function() {
-            $('.participant-card').on('click', function() {
-                var participantId = $(this).data('participantid');
-
-                // Si l'élément a déjà la classe active, la retirer
-                if ($(this).hasClass('active')) {
-                    $(this).removeClass('active');
-                    $wire.removeSelected(participantId);
-                } else {
-                    // Ajouter la classe active à l'élément
-                    $(this).addClass('active');
-                    // Ajouter la classe active à tous les éléments ayant la même classe
-                    $('.clickable').addClass('active');
-                    // Vous pouvez également utiliser la valeur de participantId ici
-                    $wire.addSelected(participantId);
-                }
-            });
-        });
-    </script> --}}

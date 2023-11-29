@@ -96,10 +96,26 @@
                     <div class="tab-content" id="show-tontine-tabBarContent">
                         <div class="tab-pane fade @if ($page == 'tontine-participants') show active @endif"
                             id="tontine-participants" role="tabpanel" aria-labelledby="tontine-participants-tab">
+                            <div class="mx-5 mb-5 text-center">
+                                <span>Il reste {{ $tontine->remainingTimeInDaysForPay() }} jours pour payer</span>
+                                <div class="progress rounded-pill mx-2">
+                                    <div class="progress-bar bg-success" role="progressbar" aria-valuenow="25"
+                                        aria-valuemin="0" aria-valuemax="100"
+                                        style="width: {{ $tontine->progress() }}%">
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-3">
                                 @forelse ($tontine->participants as $participant)
                                     <div class="col mb-3">
-                                        <x-participant-card :participant='$participant' :forTontine="true" />
+                                        @if ($tontine->isStarted())
+                                            {{-- wire:click="openModal('participant-payments')" --}}
+                                            <x-participant-card wire:click="openModal('participant-payments')"
+                                                x-on:click="$wire.set('participantId', '{{ $participant->id }}')"
+                                                :participant='$participant' :forTontine="true" :tontine="$tontine" />
+                                        @else
+                                            <x-participant-card :participant='$participant' :forTontine="true" :tontine="$tontine" />
+                                        @endif
                                     </div>
                                 @empty
                                     <div class="col-12 d-flex jutify-content-center">
@@ -124,7 +140,8 @@
             </div>
         </div>
     </div>
-    {{-- @include('includes.tontine-participants-modal') --}}
+    {{-- @include('includes.payments-modal') --}}
+
     @switch($modalOpen)
         @case('add-participant')
             @include('includes.tontine-participants-modal')
@@ -132,6 +149,10 @@
 
         @case('start-tontine')
             @include('includes.startTontine-modal')
+        @break
+
+        @case('participant-payments')
+            @include('includes.payments-modal')
         @break
 
         @default

@@ -32,6 +32,11 @@ class Tontine extends Model
         return $this->belongsToMany(Participant::class, 'tontine_participants')->withPivot('occupied_places');
     }
 
+    public function payments()
+    {
+        return $this->belongsToMany(Participant::class, 'tontine_payments')->withPivot('created_at', 'id');
+    }
+
     /*
     * Renvoi le nombre de participant courant de la tontine
     */
@@ -138,6 +143,8 @@ class Tontine extends Model
         }
     }
 
+
+
     public function getPeriode()
     {
         switch ($this->delay_unity) {
@@ -154,7 +161,7 @@ class Tontine extends Model
         }
     }
 
-    private function delayInDays()
+    private function delayInDays(bool $periode = true)
     {
 
         // if ($this->started_at == null) {
@@ -182,8 +189,9 @@ class Tontine extends Model
                 break;
         }
 
-        return $days;
+        return $periode ? $days : $days * $this->number_of_members;
     }
+
     public function finished_at()
     {
         if ($this->started_at == null) {
@@ -192,7 +200,7 @@ class Tontine extends Model
 
         $carbone = new Carbon($this->started_at);
 
-        $finishDate = $carbone->addDays($this->delayInDays());
+        $finishDate = $carbone->addDays($this->delayInDays(false));
 
         return $finishDate->format('j M Y');
     }
@@ -215,7 +223,12 @@ class Tontine extends Model
 
     public function remainingTimeInDays($date =  "")
     {
-        return $this->delayInDays() - $this->timeElapsed($date);
+        return $this->delayInDays(false) - $this->timeElapsed($date);
+    }
+
+    public function remainingTimeInDaysForPay($date =  "")
+    {
+        return ($this->delayInDays()) - $this->timeElapsed($date);
     }
 
     /** renvoie le nombre jour ecoulé en pourcentage */
@@ -228,5 +241,44 @@ class Tontine extends Model
     {
 
         return $this->remainingTimeInDays($startedDate) > 0;
+    }
+
+    public function numberOfPeriods()
+    {
+        return $this->number_of_members;
+    }
+
+    public function numberOfPeriodsElapsed()
+    {
+        $startedAt = Carbon::parse($this->started_at);
+        $numberOfPeriods = 0;
+
+        switch ($this->delay_unity) {
+            case 'day':
+                $daynumberOfPeriodss = $startedAt->diffInDays(Carbon::now());
+                break;
+            case 'week':
+                $numberOfPeriods = $startedAt->diffInWeeks(Carbon::now());
+                break;
+            case 'month':
+                $numberOfPeriods = $startedAt->diffInMonths(Carbon::now());
+                break;
+            case 'year':
+                $numberOfPeriods = $startedAt->diffInYears(Carbon::now());
+                break;
+        }
+
+        return $numberOfPeriods;
+    }
+
+    public function currentNumberOfPeriods()
+    {
+        if ($this->numberOfPeriodsElapsed() == 0) {
+            $currrentNumberOfPeriods = 1;
+        } else {
+            $currrentNumberOfPeriods  = $this->numberOfPeriods() - $this->numberOfPeriodsElapsed();
+        }
+
+        return $currrentNumberOfPeriods;
     }
 }

@@ -7,6 +7,7 @@ use Livewire\Component;
 use App\Models\Participant;
 use Livewire\Attributes\Js;
 use Livewire\Attributes\On;
+use Illuminate\Support\Facades\DB;
 use App\Livewire\Forms\ParticipantForm;
 
 class ShowTontine extends Component
@@ -33,6 +34,10 @@ class ShowTontine extends Component
 
     public $started_at = "";
 
+    public $payments;
+
+    public $participantId = "";
+
     public function mount()
     {
         $this->showTontine();
@@ -42,6 +47,7 @@ class ShowTontine extends Component
     public function boot()
     {
         $this->currentPageState();
+        $this->payments = $this->tontine->payments;
     }
 
     private function showTontine()
@@ -71,9 +77,9 @@ class ShowTontine extends Component
     public function storeAndAddParticipant()
     {
         $participant = $this->participantForm->store($this->tontine->id);
-        if(!$this->tontine->hasFull(1)){
+        if (!$this->tontine->hasFull(1)) {
             $this->tontine->participants()->attach($participant->id);
-        }else{
+        } else {
             session()->flash('success', "Partcipant créer avec succes");
             session()->flash('error', "Tontine pleine imposible d'ajouté ce participant");
         }
@@ -120,9 +126,9 @@ class ShowTontine extends Component
         if ($this->tontine->isFull()) {
             if ($this->tontine->isStarted()) {
 
-                if($this->page == 'tontine-participants'){
+                if ($this->page == 'tontine-participants') {
                     $this->pageState = 'tontine-started';
-                }else{
+                } else {
                     $this->pageState = 'get-contributions';
                 }
             } else {
@@ -180,18 +186,43 @@ class ShowTontine extends Component
         $this->currentPageState();
     }
 
-    public function startTontine(){
+    public function startTontine()
+    {
         $started_at = $this->started_at != "" ? $this->started_at : now();
-        if($this->tontine->startedDateIsValide($started_at)){
+        if ($this->tontine->startedDateIsValide($started_at)) {
             $this->tontine->update([
                 'status' => 'ongoing',
                 'started_at' => $started_at
             ]);
             session()->flash("success", 'Tontine Démarrer');
-        }else{
+        } else {
             session()->flash("error", 'Date incorecte, veullez entrer une date coherente');
         }
         $this->closeModal();
         $this->redirectRoute('tontine.show', $this->tontine->id);
+    }
+
+    public function storePayment($participantId)
+    {
+        if ($this->tontine->payments()->where('participant_id', $participantId)->count() < $this->tontine->numberOfPeriods()) {
+            $this->tontine->payments()->attach($participantId);
+        } else {
+            session()->flash('error', "Nombre paiment maximal atteint");
+            $this->closeModal();
+            $this->redirectRoute('tontine.show', $this->tontine->id);
+        }
+    }
+
+    public function cancelPayment($participantId)
+    {
+        $payments = $this->tontine->payments()->wherePivot('participant_id', $participantId)->orderByPivot('created_at', "desc")->get();
+        if ($payments->count() >= 0) {
+            $lastPaymentId = $payments->first()->pivot->id;
+            DB::table('tontine_payments')->where('id', '=', $lastPaymentId)->delete();
+        } else {
+            session()->flash('error', "Nombre paiment minimum atteint");
+            $this->closeModal();
+            $this->redirectRoute('tontine.show', $this->tontine->id);
+        }
     }
 }

@@ -1,5 +1,5 @@
 <div class="modal show" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" style="display: block;">
-    <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-dialog @if ($tontineParticipantModal == 'add-participant') modal-dialog-scrollable @endif">
         <div class="modal-content">
             <div class="modal-header d-flex justify-content-center">
                 <h5 wire:click='closeModal' class="modal-title" id="modalLabel"><a role="button"><i
