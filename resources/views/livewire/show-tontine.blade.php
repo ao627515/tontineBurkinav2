@@ -1,17 +1,8 @@
 <div id="show-tontine">
-    @if (session('success'))
-        <x-alert class="alert alert-success" :dismissible='true'>
-            {{ session('success') }}
-        </x-alert>
-    @endif
-    @if (session('error'))
-        <x-alert class="alert alert-danger" :dismissible='true'>
-            {{ session('error') }}
-        </x-alert>
-    @endif
+    <x-custom.alert />
     <div class="card">
         @if ($tontineInfo)
-            <div class="card-body px-5">
+            <div class="card-body px-sm-5 " id="tontineInfo">
                 <div class="card mb-3">
                     <div class="card-header bg-secondary text-center p-2">
                         <i wire:click='closeTontineInfo' class="fa-solid fa-xmark icon-close"></i>
@@ -24,33 +15,33 @@
                                 Créer le <span
                                     class="float-right badge bg-primary">{{ App\Models\Tontine::dateFormat($tontine->created_at) }}</span>
                             </li>
-                            <li class="nav-item py-2">
+                            <li class="nav-item py-2 font-title">
                                 Montant de la cotisation <span class="float-right badge bg-info">{{ $tontine->amount }}
                                     FCFA</span>
                             </li>
-                            <li class="nav-item py-2">
+                            <li class="nav-item py-2 font-title">
                                 Participants <span
                                     class="float-right badge bg-danger">{{ $tontine->currentParticiantsNumber() }} /
                                     {{ $tontine->number_of_members }}</span>
                             </li>
-                            <li class="nav-item py-2">
+                            <li class="nav-item py-2 font-title">
                                 Montant de la prise <span
                                     class="float-right badge bg-info">{{ $tontine->amount * $tontine->number_of_members }}
                                     FCFA</span>
                             </li>
-                            <li class="nav-item py-2">
+                            <li class="nav-item py-2 font-title">
                                 Période <span class="float-right badge bg-danger">{{ $tontine->getPeriode() }}</span>
                             </li>
-                            @if ($tontine->isStarted())
-                                <li class="nav-item py-2">
+                            @if (!$tontine->isNotStarted())
+                                <li class="nav-item py-2 font-title">
                                     Débute le <span
                                         class="float-right badge bg-primary">{{ App\Models\Tontine::dateFormat($tontine->started_at) }}</span>
                                 </li>
-                                <li class="nav-item py-2">
+                                <li class="nav-item py-2 font-title">
                                     Date de Fin <span
                                         class="float-right badge bg-info">{{ $tontine->finished_at() }}</span>
                                 </li>
-                                <li class="nav-item py-2 text-center">
+                                <li class="nav-item py-2 text-center font-title">
                                     <span>Il reste {{ $tontine->remainingTimeInDays() }} jours</span>
                                     <div class="progress rounded-pill mx-2">
                                         <div class="progress-bar bg-success" role="progressbar" aria-valuenow="25"
@@ -66,81 +57,119 @@
                 </div>
             </div>
         @endif
-        <div class="card-header bg-light d-flex justify-content-end px-5">
+        {{-- <div class="card-header bg-light d-flex justify-content-end px-5">
+            @if ($tontine->isFull() and $tontine->isNotStarted())
+                <button class="btn btn-info mr-3" wire:click="openModal('add-participant')">Participants</button>
+            @endif
             <button class="btn btn-primary"
                 wire:click="openModal('{{ $callActionModal }}')">{{ $btnCallAction }}</button>
-        </div>
-        <div class="card-header bg-light px-5">
+        </div> --}}
+        <x-tontine-show.main-button :tontine="$tontine" :page="$page" />
+        {{-- <div class="card-header bg-light px-5">
             <x-search-bar name="search" name="avoir" />
-        </div>
+        </div> --}}
         <div class="card-body">
+            @php
+                // Nombre de participant a la tontine
+                $participantsNumber = $tontine->participants->count();
+            @endphp
             <div class="card card-primary card-outline card-outline-tabs">
                 <div class="card-header p-0 border-bottom-0">
                     <ul class="nav nav-tabs" id="show-tontine-tabBar" role="tablist">
-                        <li class="nav-item w-50 text-center">
+                        <li class="nav-item @if ($participantsNumber >= 1) w-50 @else w-100 @endif text-center">
                             <a wire:click="changePage('tontine-participants')"
                                 class="nav-link @if ($page == 'tontine-participants') active @endif"
                                 id="tontine-participants-tab" data-toggle="pill" href="#tontine-participants"
-                                role="tab" aria-controls="tontine-participants" aria-selected="true">Participant</a>
+                                role="tab" aria-controls="tontine-participants"
+                                aria-selected="true">Participants</a>
                         </li>
-                        <li class="nav-item w-50 text-center">
-                            <a wire:click="changePage('tontine-contributions')"
-                                class="nav-link @if ($page == 'tontine-contributions') active @endif"
-                                id="tontine-contributions-tab" data-toggle="pill" href="#tontine-contributions"
-                                role="tab" aria-controls="tontine-contributions" aria-selected="false">Prise de la
-                                cotisation</a>
-                        </li>
+
+                        @if ($participantsNumber >= 1)
+                            <li class="nav-item w-50 text-center">
+                                <a wire:click="changePage('tontine-contributions')"
+                                    class="nav-link @if ($page == 'tontine-contributions') active @endif"
+                                    id="tontine-contributions-tab" data-toggle="pill" href="#tontine-contributions"
+                                    role="tab" aria-controls="tontine-contributions" aria-selected="false">Prise
+                                    de
+                                    la
+                                    cotisation</a>
+                            </li>
+                        @endif
                     </ul>
                 </div>
                 <div class="card-body">
                     <div class="tab-content" id="show-tontine-tabBarContent">
                         <div class="tab-pane fade @if ($page == 'tontine-participants') show active @endif"
                             id="tontine-participants" role="tabpanel" aria-labelledby="tontine-participants-tab">
-                            <div class="mx-5 mb-5 text-center">
-                                <span>Il reste {{ $tontine->remainingTimeInDaysForPay() }} jours pour payer</span>
-                                <div class="progress rounded-pill mx-2">
-                                    <div class="progress-bar bg-success" role="progressbar" aria-valuenow="25"
-                                        aria-valuemin="0" aria-valuemax="100"
-                                        style="width: {{ $tontine->progress() }}%">
+                            @if ($tontine->status != 'creating')
+                                <div class="mx-5 mb-5 text-center">
+                                    <span>Il reste {{ $tontine->remainingTimeInDaysForPay() }} jours pour
+                                        payer</span>
+                                    <div class="progress rounded-pill mx-2">
+                                        <div class="progress-bar bg-success" role="progressbar" aria-valuenow="25"
+                                            aria-valuemin="0" aria-valuemax="100"
+                                            style="width: {{ $tontine->progress() }}%">
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-3">
+                            @endif
+                            <div class="row">
                                 @forelse ($tontine->participants as $participant)
-                                    <div class="col mb-3">
+                                    <div class="col-12 col-sm-6 col-lg-4 mb-3">
                                         @if ($tontine->isStarted())
                                             {{-- wire:click="openModal('participant-payments')" --}}
                                             <x-participant-card wire:click="openModal('participant-payments')"
                                                 x-on:click="$wire.set('participantId', '{{ $participant->id }}')"
                                                 :participant='$participant' :forTontine="true" :tontine="$tontine" />
                                         @else
-                                            <x-participant-card :participant='$participant' :forTontine="true" :tontine="$tontine" />
+                                            <x-participant-card :participant='$participant' :forTontine="true"
+                                                :tontine="$tontine" />
                                         @endif
                                     </div>
                                 @empty
-                                    <div class="col-12 d-flex jutify-content-center">
-                                        <img src="{{ asset('dist/img/no_tontine.jpeg') }}" alt=""
-                                            class="img-fluid">
+                                    <div class="col-12">
+                                        <p class="w-100 lead text-center">Aucun participants</p>
                                     </div>
                                 @endforelse
                             </div>
                         </div>
-                        <div class="tab-pane fade @if ($page == 'tontine-contributions') show active @endif"
-                            id="tontine-contributions" role="tabpanel" aria-labelledby="tontine-contributions-tab">
-                            Mauris tincidunt mi at erat gravida, eget tristique urna bibendum. Mauris pharetra purus ut
-                            ligula tempor, et vulputate metus facilisis. Lorem ipsum dolor sit amet, consectetur
-                            adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere
-                            cubilia Curae; Maecenas sollicitudin, nisi a luctus interdum, nisl ligula placerat mi, quis
-                            posuere purus ligula eu lectus. Donec nunc tellus, elementum sit amet ultricies at, posuere
-                            nec nunc. Nunc euismod pellentesque diam.
-                        </div>
+
+                        @if ($participantsNumber >= 1)
+                            <div class="tab-pane fade @if ($page == 'tontine-contributions') show active @endif"
+                                id="tontine-contributions" role="tabpanel" aria-labelledby="tontine-contributions-tab">
+                                <div class="card">
+                                    @php
+                                        $pgc = $tontine->participantGetContributions();
+                                    @endphp
+                                    @if ($pgc != null)
+                                        <div class="card-header d-flex justify-content-center ">
+                                            <x-participant-card :participant='$pgc' />
+                                        </div>
+                                    @endif
+                                    <div class="card-body">
+                                        <div class="row">
+                                            @forelse ($tontine->getContributions()->orderBy('created_at', 'desc')->get() as $participant)
+                                                <div class="col-12 col-3 mb-3" wire:key='{{ $participant->id }}'>
+                                                    <x-participant-card :participant='$participant' />
+                                                </div>
+                                            @empty
+                                                <div class="col-12">
+                                                    <p class="lead text-center w-100">Vide</p>
+                                                </div>
+                                            @endforelse
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
                 <!-- /.card -->
             </div>
         </div>
     </div>
-    {{-- @include('includes.payments-modal') --}}
+
+
 
     @switch($modalOpen)
         @case('add-participant')
@@ -155,9 +184,20 @@
             @include('includes.payments-modal')
         @break
 
-        @default
+        @case('get-contributions')
+            @include('includes.confirm-getContribution-modal')
+        @break
+
+        @case('cancel-tontine')
+            @include('includes.confirm-cancel-tontine-modal')
+        @break
+
+        @case('edit-tontine')
+            @include('includes.create-tontine-form')
+        @break
+
+        @case('delete-tontine')
+        @include('includes.confirm-delete-tontine-modal')
         @break
     @endswitch
-
-
 </div>

@@ -22,19 +22,29 @@ class Tontine extends Model
         return $this->status == "ongoing";
     }
 
-    public function cotisation()
+    public function isFinish()
     {
-        //
+        return $this->status == "completed";
+    }
+
+    public function isCancel()
+    {
+        return $this->status == "suspended";
     }
 
     public function participants()
     {
-        return $this->belongsToMany(Participant::class, 'tontine_participants')->withPivot('occupied_places');
+        return $this->belongsToMany(Participant::class, 'tontine_participants')->withPivot('occupied_places', 'assigned_rank');
     }
 
     public function payments()
     {
         return $this->belongsToMany(Participant::class, 'tontine_payments')->withPivot('created_at', 'id');
+    }
+
+    public function getContributions()
+    {
+        return $this->belongsToMany(Participant::class, 'tontine_contributions_get')->withPivot('created_at', 'id');
     }
 
     /*
@@ -57,6 +67,8 @@ class Tontine extends Model
 
         return $participantCurrentNumber;
     }
+
+
 
     /*
     * Répond a la question
@@ -86,7 +98,7 @@ class Tontine extends Model
 
     public function participationRank()
     {
-        $participantsNumber = $this->participation->count();
+        $participantsNumber = $this->participants->count();
 
         if ($participantsNumber == 0) {
             $rank = 1;
@@ -239,8 +251,12 @@ class Tontine extends Model
 
     public function startedDateIsValide($startedDate)
     {
-
         return $this->remainingTimeInDays($startedDate) > 0;
+    }
+
+    public function getContributionsDateIsValide($getContributionsDate)
+    {
+        return;
     }
 
     public function numberOfPeriods()
@@ -248,14 +264,22 @@ class Tontine extends Model
         return $this->number_of_members;
     }
 
+
+    /**
+     * Calcule le nombre de périodes écoulées depuis la date de début jusqu'à la date actuelle,
+     * en fonction de l'unité de délai spécifiée.
+     *
+     * @return int Le nombre de périodes écoulées.
+     */
     public function numberOfPeriodsElapsed()
     {
         $startedAt = Carbon::parse($this->started_at);
+
         $numberOfPeriods = 0;
 
         switch ($this->delay_unity) {
             case 'day':
-                $daynumberOfPeriodss = $startedAt->diffInDays(Carbon::now());
+                $numberOfPeriods = $startedAt->diffInDays(Carbon::now());
                 break;
             case 'week':
                 $numberOfPeriods = $startedAt->diffInWeeks(Carbon::now());
@@ -281,4 +305,80 @@ class Tontine extends Model
 
         return $currrentNumberOfPeriods;
     }
+
+    public function participantGetContributions()
+    {
+        $rank = 0;
+        if ($this->getContributions->count() == 0) {
+            $rank = 1;
+        } else {
+            $participantGetContributions = $this->getContributions()->orderByPivot('created_at', "desc")->first();
+            $rank = ++$this->participants()->wherePivot('participant_id', $participantGetContributions->id)->first()->pivot->assigned_rank;
+        }
+
+        return $rank > $this->number_of_members ?  null : $this->participants()->wherePivot('assigned_rank', $rank)->first();
+    }
+
+    /**
+     * Vérifie si un membre peut prendre la cotisation pour la période actuelle de la tontine.
+     *
+     * @return bool True si le membre peut effectuer sa contribution, sinon False.
+     */
+
+    public function canGetContribution()
+    {
+        $membersGetContributions = $this->getContributions->count();
+        $totalMembers = $this->number_of_members;
+        $currentPeriodPayment = $this->tontine?->getCurrentPeriodePayment();
+        $periodsElapsed = $this->numberOfPeriodsElapsed();
+
+        if ($membersGetContributions != $totalMembers) {
+            return false;
+        }
+
+        if ($currentPeriodPayment != $totalMembers && $membersGetContributions == $periodsElapsed) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    // V2
+    // public function canGetContribution()
+    // {
+    //     $membersGetContributions =  $this->getContributions->count();
+
+    //     return $membersGetContributions == $this->number_of_members ? false : ($this->tontine?->getCurrentPeriodePayment() == $this->number_of_members ? ($membersGetContributions == $this->numberOfPeriodsElapsed() ? false : true) : false);
+    // }
+
+    // V1
+    // public function canGetContribution() {
+    //     $membersGetContributions =  $this->getContributions->count();
+
+    //     return $membersGetContributions == $this->number_of_members ? false : ($membersGetContributions == $this->numberOfPeriodsElapsed() ? false : true);
+    // }
+
+
+    /**
+     * Renvoie le nombre de paiement effectuer dans la periode courante
+     */
+    public function getCurrentPeriodePayment()
+    {
+        $currentPeriodPayments = 0;
+
+        $participants = $this->participants;
+
+        if ($participants && $participants->isNotEmpty()) {
+            foreach ($participants as $participant) {
+                $participantPayments = $this->payments()->wherePivot('participant_id', $participant->id)->get()->count();
+                if ($participantPayments >= $this->currentNumberOfPeriods()) {
+                    ++$currentPeriodPayments;
+                }
+            }
+        }
+
+        return $currentPeriodPayments;
+    }
+
 }

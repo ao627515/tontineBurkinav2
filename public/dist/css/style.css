@@ -38,6 +38,11 @@
     font-size: clamp(10px, 2vw, 16px);
 }
 
+#show-tontine #tontineInfo .font-title{
+    font-size: clamp(12px, 2vw, 16px);
+}
+
+
 #show-tontine .tontine-participant-card .font-sub-title,
 #show-tontine .participant-card .font-sub-title,
 #show-tontine .payment-card .font-sub-title{

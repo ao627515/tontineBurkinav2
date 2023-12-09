@@ -13,6 +13,8 @@ class Navbar extends Component
 
     public $tontineInfoIsOpen = true;
 
+    public $tontineIsStarted = false;
+
     public function render()
     {
         return view('livewire.navbar');
@@ -44,5 +46,20 @@ class Navbar extends Component
     #[On('closeTontineInfo')]
     public function openTontineInfo_ui(){
         $this->tontineInfoIsOpen = false;
+    }
+
+
+
+    public function editTontine() {
+        $this->dispatch('editTontine')->to('ShowTontine');
+    }
+
+    public function deleteTontine() {
+        $this->dispatch('deleteTontine')->to('ShowTontine');
+    }
+
+    #[On("tontineIsStarted")]
+    public function tontineIsStarted(){
+        $this->tontineIsStarted = true;
     }
 }

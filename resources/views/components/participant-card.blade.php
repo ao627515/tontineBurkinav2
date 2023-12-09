@@ -4,7 +4,7 @@
         $max_width = 'max-width: 440px;';
     } else {
         $imgSize = 45;
-        $max_width = 'width: 340px;';
+        $max_width = 'width: 240px;';
     }
 @endphp
 <div class="@if ($forTontine) tontine-participant-card @else participant-card @endif @if (in_array($participant->id, $selected)) active @endif  card mb-0"

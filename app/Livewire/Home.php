@@ -5,7 +5,6 @@ namespace App\Livewire;
 use App\Models\Tontine;
 use Livewire\Component;
 use Livewire\Attributes\Url;
-use App\Livewire\TontineList;
 use App\Livewire\Forms\TontineForm;
 use Livewire\Attributes\Title;
 

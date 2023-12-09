@@ -5,10 +5,10 @@
             <div class="modal-content">
                 <div class="modal-header d-flex justify-content-center">
                     <h5 wire:click='closeModal' class="modal-title" id="modalLabel"><a role="button"><i
-                                class="fa-solid fa-arrow-left mr-4"></i></a> Créer une tontine</h5>
+                                class="fa-solid fa-arrow-left mr-4"></i></a> @if ($tontine) Modifer @else Créer @endif une tontine</h5>
                 </div>
                 <div class="modal-body">
-                    <form wire:submit="storeTontine" id="createTontine">
+                    <form @if ($tontine) wire:submit="updateTontine" @else wire:submit="storeTontine" @endif id="createTontine">
                         <div class="row row-cols-1">
                             <div class="col">
                                 <div class="border border-secondary p-1 mb-3">
@@ -98,7 +98,7 @@
                 </div>
                 <div class="modal-footer d-flex justify-content-around">
                     <button type="submit" form="createTontine" class="btn btn-success"><i class="fa fa-check"></i>
-                        Créer</button>
+                        @if ($tontine) Modifer @else Créer @endif </button>
                     <button wire:click='closeModal' type="button" class="btn btn-danger"><i class="fa fa-cancel"></i>
                         Annuler</button>
                 </div>

@@ -4,10 +4,7 @@ namespace App\Livewire\Forms;
 
 use Livewire\Form;
 use App\Models\Tontine;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Rule;
-use Ramsey\Uuid\Type\Integer;
-use Livewire\Attributes\Validate;
 
 class TontineForm extends Form
 {
@@ -33,11 +30,6 @@ class TontineForm extends Form
     #[Rule('nullable|string')]
     public  $description;
 
-    #[Rule('nullable')]
-    public  $id;
-
-    private  $user_id;
-
     public function store()
     {
         $this->validate();
@@ -45,8 +37,8 @@ class TontineForm extends Form
         Tontine::create(array_merge(
             $this->all(),
             [
-                'id' => Str::uuid(),
-                'status' => 'creating'
+                'status' => 'creating',
+                // 'user_id' => auth()->user()->id
             ],
         ));
 
@@ -55,8 +47,10 @@ class TontineForm extends Form
         $this->reset();
     }
 
-    public function update()
-    {
-        //
+    public function update(Tontine $tontine){
+        $this->validate();
+        $tontine->update($this->all());
+        session()->flash('success', 'Votre tontine a été crée avec succès.');
+        $this->reset();
     }
 }

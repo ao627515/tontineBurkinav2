@@ -5,16 +5,14 @@ namespace App\Livewire;
 use App\Models\Tontine;
 use Livewire\Component;
 use App\Models\Participant;
+use Livewire\Attributes\Js;
 use Livewire\Attributes\On;
 use Illuminate\Support\Facades\DB;
-use App\Livewire\Forms\TontineForm;
 use App\Livewire\Forms\ParticipantForm;
 
 class ShowTontine extends Component
 {
     public Tontine $tontine;
-
-    public TontineForm $tontineForm;
 
     public ParticipantForm $participantForm;
 
@@ -24,22 +22,21 @@ class ShowTontine extends Component
     public string $callActionModal = '';
 
     public string $page = 'tontine-participants';
+    public string $pageState = 'add-participants';
 
     public bool $tontineInfo = true;
 
-    // public $searchAddPaticipant = '';
+    public $searchAddPaticipant = '';
 
     public $selected = [];
 
     public string $tontineParticipantModal = "add-participant";
 
-    public $started_at ;
+    public $started_at = "";
 
     public $payments;
 
     public $participantId = "";
-
-    public string $suspension_reason = '';
 
     public function mount()
     {
@@ -49,9 +46,8 @@ class ShowTontine extends Component
 
     public function boot()
     {
+        $this->currentPageState();
         $this->payments = $this->tontine->payments;
-        if($this->tontine->isStarted())  $this->dispatch('tontineIsStarted')->to('Navbar');
-
     }
 
     private function showTontine()
@@ -61,8 +57,13 @@ class ShowTontine extends Component
 
     public function render()
     {
+        $this->btnCallAction();
         return view('livewire.show-tontine', [
-            'delay_unity' => ['day' => 'Jour', 'week' => 'Semaine', 'month' => "Mois", 'year' => 'Année'],
+            'allParticipants' => Participant::where('last_name', 'LIKE', "%{$this->searchAddPaticipant}%")
+                ->orWhere('first_name', 'LIKE', "%{$this->searchAddPaticipant}%")
+                ->orWhere('phone_number', 'LIKE', "%{$this->searchAddPaticipant}%")
+                ->orderBy('created_at', 'desc')
+                ->get()
         ])
             ->extends('layouts.public')
             ->title($this->tontine->name);
@@ -101,6 +102,50 @@ class ShowTontine extends Component
     public function closeModal()
     {
         $this->modalOpen = '';
+    }
+
+    public function btnCallAction()
+    {
+        switch ($this->pageState) {
+            case 'add-participants':
+                $this->btnCallAction = 'Ajouter';
+                $this->callActionModal = 'add-participant';
+                break;
+            case 'get-contributions':
+                $this->btnCallAction = 'Valider';
+                $this->callActionModal = 'get-contributions';
+                break;
+            case 'starting-tontine':
+                $this->btnCallAction = 'Commencer';
+                $this->callActionModal = 'start-tontine';
+                break;
+            case 'tontine-started':
+                $this->btnCallAction = 'Annuler';
+                $this->callActionModal = 'tontine-started';
+                break;
+            case 'tontine-finish':
+                $this->btnCallAction = 'Recomencé';
+                $this->callActionModal = 'tontine-relauch';
+                break;
+        }
+    }
+
+    private function currentPageState()
+    {
+        if ($this->tontine->isFull()) {
+            if ($this->tontine->isStarted()) {
+                if ($this->page == 'tontine-participants') {
+                    $this->pageState = 'tontine-started';
+                } else {
+                    $this->pageState = 'get-contributions';
+                }
+            } elseif($this->tontine->isFinish())
+            {
+                $this->pageState = 'tontine-finish';
+            }
+        } else {
+            $this->pageState = 'add-participants';
+        }
     }
 
     public function closeTontineInfo()
@@ -146,6 +191,8 @@ class ShowTontine extends Component
                 $this->page = $page;
                 break;
         }
+
+        $this->currentPageState();
     }
 
     public function startTontine()
@@ -204,45 +251,6 @@ class ShowTontine extends Component
         $this->tontine->update([
             'status' => 'completed'
         ]);
-    }
-
-    public function cancelTontine(){
-        $this->tontine->update([
-            "status" => "suspended",
-            "suspension_at" => now(),
-            'suspension_reason' => $this->suspension_reason
-        ]);
-        $this->closeModal();
-        $this->reset('suspension_reason');
-    }
-
-    #[On('editTontine')]
-    public function editTontine() {
-        $this->tontineForm->name = $this->tontine->name;
-        $this->tontineForm->profit = $this->tontine->profit;
-        $this->tontineForm->delay = $this->tontine->delay;
-        $this->tontineForm->delay_unity = $this->tontine->delay_unity;
-        $this->tontineForm->amount = $this->tontine->amount;
-        $this->tontineForm->number_of_members = $this->tontine->number_of_members;
-        $this->tontineForm->description = $this->tontine->description;
-        $this->openModal('edit-tontine');
-    }
-
-    #[On('deleteTontine')]
-    public function deleteTontineEvent() {
-        $this->openModal('delete-tontine');
-    }
-
-    public function updateTontine()
-    {
-        $this->tontineForm->update($this->tontine);
-        $this->redirectRoute('tontine.show', $this->tontine->id);
-    }
-
-    public function deleteTontine(){
-        $this->tontine->delete();
-        session()->flash('success', 'Votre tontine a été supprimé avec succès.');
-
-        $this->redirectRoute('home');
+        $this->pageState = 'tontine-finish';
     }
 }

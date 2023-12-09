@@ -27,8 +27,10 @@
                 @endif
                 <i class="fa-solid fa-circle-info font-title"></i>
             </li>
-            <li class="nav-item"><i class="fa-solid fa-pen font-title"></i></li>
-            <li class="nav-item"><i class="fa-solid fa-trash font-title"></i></li>
+            @if (!$tontineIsStarted)
+                <li wire:click='editTontine' class="nav-item"><i class="fa-solid fa-pen font-title"></i></li>
+                <li wire:click='deleteTontine' class="nav-item"><i class="fa-solid fa-trash font-title"></i></li>
+            @endif
             <li class="nav-item"><i class="fa-solid fa-bell font-title"></i></li>
         </ul>
     @endif
