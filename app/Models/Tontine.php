@@ -325,31 +325,50 @@ class Tontine extends Model
      * @return bool True si le membre peut effectuer sa contribution, sinon False.
      */
 
+    // public function canGetContribution()
+    // {
+    //     $membersGetContributions = $this->getContributions->count();
+
+    //     $totalMembers = $this->number_of_members;
+    //     $nextMembersGetContributions = $membersGetContributions != $totalMembers ? $membersGetContributions + 1 : $membersGetContributions;
+    //     $periodPayment = $this->getPeriodePayment($nextMembersGetContributions);
+
+    //     $can = false;
+
+    //     // si tout les membre non pas encore pris la cota
+    //     // et
+    //     // si tout le monde a payer pour une periode $membersGetContributions + 1
+
+    //     if ($membersGetContributions != $totalMembers && $periodPayment == $totalMembers) {
+    //         $can =  true;
+    //     }
+
+    //     return $can;
+    // }
+
+    // V3
     public function canGetContribution()
     {
         $membersGetContributions = $this->getContributions->count();
         $totalMembers = $this->number_of_members;
-        $currentPeriodPayment = $this->tontine?->getCurrentPeriodePayment();
+        $currentPeriodPayment = $this->getPeriodePayment();
         $periodsElapsed = $this->numberOfPeriodsElapsed();
 
-        if ($membersGetContributions != $totalMembers) {
-            return false;
-        }
-
-        if ($currentPeriodPayment != $totalMembers && $membersGetContributions == $periodsElapsed) {
+        // si tout le monde pris
+        // si tout le monde a payer pour cette periode
+        // si quelle qu'un a deja pris pour cette periode
+        if ($membersGetContributions == $totalMembers || $currentPeriodPayment != $totalMembers || $membersGetContributions == $periodsElapsed) {
             return false;
         }
 
         return true;
     }
-
-
     // V2
     // public function canGetContribution()
     // {
     //     $membersGetContributions =  $this->getContributions->count();
 
-    //     return $membersGetContributions == $this->number_of_members ? false : ($this->tontine?->getCurrentPeriodePayment() == $this->number_of_members ? ($membersGetContributions == $this->numberOfPeriodsElapsed() ? false : true) : false);
+    //     return $membersGetContributions == $this->number_of_members ? false : ($this->tontine?->getPeriodePayment() == $this->number_of_members ? ($membersGetContributions == $this->numberOfPeriodsElapsed() ? false : true) : false);
     // }
 
     // V1
@@ -363,8 +382,11 @@ class Tontine extends Model
     /**
      * Renvoie le nombre de paiement effectuer dans la periode courante
      */
-    public function getCurrentPeriodePayment()
+    public function getPeriodePayment(int $periode = null)
     {
+
+        $periode = $periode == null ? $this->currentNumberOfPeriods() : $periode;
+
         $currentPeriodPayments = 0;
 
         $participants = $this->participants;
@@ -372,12 +394,11 @@ class Tontine extends Model
         if ($participants && $participants->isNotEmpty()) {
             foreach ($participants as $participant) {
                 $participantPayments = $this->payments()->wherePivot('participant_id', $participant->id)->get()->count();
-                if ($participantPayments >= $this->currentNumberOfPeriods()) {
+                if ($participantPayments >= $periode) {
                     ++$currentPeriodPayments;
                 }
             }
         }
-
         return $currentPeriodPayments;
     }
 

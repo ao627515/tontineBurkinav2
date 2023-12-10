@@ -5,10 +5,10 @@
             <div class="modal-content">
                 <div class="modal-header d-flex justify-content-center">
                     <h5 wire:click='closeModal' class="modal-title" id="modalLabel"><a role="button"><i
-                                class="fa-solid fa-arrow-left mr-4"></i></a> Créer une tontine</h5>
+                                class="fa-solid fa-arrow-left mr-4"></i></a> Modifer une tontine</h5>
                 </div>
                 <div class="modal-body">
-                    <form wire:submit="storeTontine" id="createTontine">
+                    <form  wire:submit="updateTontine" id="createTontine">
                         <div class="row row-cols-1">
                             <div class="col">
                                 <div class="border border-secondary p-1 mb-3">
@@ -17,9 +17,9 @@
                                             prise</h5>
                                         <h6 class="m-0 font-title text-center">
                                             <strong>
-                                                @if ($tontineForm->amount != '' && $tontineForm->number_of_members != '')
+                                                @if ($tontineForm->amount != '' &&  $tontineForm->number_of_members != '')
                                                     {{ $tontineForm->amount * $tontineForm->number_of_members }}
-                                                @else
+                                                    @else
                                                     0
                                                 @endif
                                             </strong>
@@ -97,8 +97,7 @@
                     </form>
                 </div>
                 <div class="modal-footer d-flex justify-content-around">
-                    <button type="submit" form="createTontine" class="btn btn-success"><i class="fa fa-check"></i>
-                        Créer </button>
+                    <button type="submit" form="createTontine" class="btn btn-success"><i class="fa fa-check"></i> Modifer </button>
                     <button wire:click='closeModal' type="button" class="btn btn-danger"><i class="fa fa-cancel"></i>
                         Annuler</button>
                 </div>

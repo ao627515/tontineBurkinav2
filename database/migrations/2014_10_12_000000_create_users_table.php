@@ -22,7 +22,7 @@ return new class extends Migration
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();
-            $table->foreignUuid('user_id')->nullable()->references('id')->on('user')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignUuid('user_id')->nullable();
         });
     }
 

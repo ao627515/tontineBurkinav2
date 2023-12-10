@@ -54,6 +54,6 @@
     <script>
         setInterval(() => {
             $wire.$refresh()
-        }, 2000);
+        }, 500);
     </script>
 @endscript

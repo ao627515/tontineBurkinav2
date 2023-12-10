@@ -27,7 +27,7 @@ class ShowTontine extends Component
 
     public bool $tontineInfo = true;
 
-    // public $searchAddPaticipant = '';
+    public $searchAddPaticipant = '';
 
     public $selected = [];
 
@@ -63,6 +63,11 @@ class ShowTontine extends Component
     {
         return view('livewire.show-tontine', [
             'delay_unity' => ['day' => 'Jour', 'week' => 'Semaine', 'month' => "Mois", 'year' => 'Année'],
+            'allParticipants' => Participant::where('last_name', 'LIKE', "%{$this->searchAddPaticipant}%")
+            ->orWhere('first_name', 'LIKE', "%{$this->searchAddPaticipant}%")
+            ->orWhere('phone_number', 'LIKE', "%{$this->searchAddPaticipant}%")
+            ->orderBy('created_at', 'desc')
+            ->get()
         ])
             ->extends('layouts.public')
             ->title($this->tontine->name);

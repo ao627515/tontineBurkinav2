@@ -122,8 +122,7 @@
                                                 x-on:click="$wire.set('participantId', '{{ $participant->id }}')"
                                                 :participant='$participant' :forTontine="true" :tontine="$tontine" />
                                         @else
-                                            <x-participant-card :participant='$participant' :forTontine="true"
-                                                :tontine="$tontine" />
+                                            <x-participant-card :participant='$participant' :forTontine="true" :tontine="$tontine" />
                                         @endif
                                     </div>
                                 @empty
@@ -149,7 +148,7 @@
                                     <div class="card-body">
                                         <div class="row">
                                             @forelse ($tontine->getContributions()->orderBy('created_at', 'desc')->get() as $participant)
-                                                <div class="col-12 col-3 mb-3" wire:key='{{ $participant->id }}'>
+                                                <div class="col-12 col-sm-3 mb-3" wire:key='{{ $participant->id }}'>
                                                     <x-participant-card :participant='$participant' />
                                                 </div>
                                             @empty
@@ -193,11 +192,11 @@
         @break
 
         @case('edit-tontine')
-            @include('includes.create-tontine-form')
+            @include('includes.update-tontine-form')
         @break
 
         @case('delete-tontine')
-        @include('includes.confirm-delete-tontine-modal')
+            @include('includes.confirm-delete-tontine-modal')
         @break
     @endswitch
 </div>
