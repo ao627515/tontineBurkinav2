@@ -32,6 +32,10 @@ class Tontine extends Model
         return $this->status == "suspended";
     }
 
+    public function periodeIs(int $delay, string $delayUnity){
+        return $this->delay == $delay && $this->delay_unity;
+    }
+
     public function participants()
     {
         return $this->belongsToMany(Participant::class, 'tontine_participants')->withPivot('occupied_places', 'assigned_rank');
@@ -173,7 +177,9 @@ class Tontine extends Model
         }
     }
 
-    private function delayInDays(bool $periode = true)
+    // are metre a private
+
+    public function delayInDays(bool $periode = true)
     {
 
         // if ($this->started_at == null) {
@@ -222,7 +228,8 @@ class Tontine extends Model
         return date("d M Y", strtotime($started_at . " + " . $this->delay . " " . $this->delay_unity));
     }
 
-    private function timeElapsed($dateStart = "")
+    // a remetre a private
+    public function timeElapsed($dateStart = "")
     {
         $startDate = $dateStart == "" ? $this->started_at : $dateStart;
         // Assurez-vous que $this->started_at est une instance de Carbon
@@ -240,14 +247,30 @@ class Tontine extends Model
 
     public function remainingTimeInDaysForPay($date =  "")
     {
-        return ($this->delayInDays()) - $this->timeElapsed($date);
+        return ($this->delayInDays()) - ($this->timeElapsed($date) - ($this->delayInDays() * $this->numberOfPeriodsElapsed()));
     }
 
     /** renvoie le nombre jour ecoulé en pourcentage */
     public function progress()
     {
-        return ($this->timeElapsed() / $this->delayInDays()) * 100;
+        return ($this->timeElapsed() / ($this->delayInDays() * $this->number_of_members)) * 100;
     }
+
+    public function progressForPeriode()
+    {
+        return (($this->timeElapsed() - ($this->delayInDays() * $this->numberOfPeriodsElapsed()))/ $this->delayInDays()) * 100;
+    }
+
+    public function progressForHour()
+    {
+        // Convertir la base de temps en heures
+        $baseTimeInHours = 24; // Si delayInDays() renvoie toujours 1 jour
+
+        // Calculer le progrès en fonction de la base de temps en heures
+        return ((($this->timeElapsed() * 24) - ($baseTimeInHours * $this->numberOfPeriodsElapsed())) / $baseTimeInHours) * 100;
+    }
+
+
 
     public function startedDateIsValide($startedDate)
     {
@@ -354,10 +377,14 @@ class Tontine extends Model
         $currentPeriodPayment = $this->getPeriodePayment();
         $periodsElapsed = $this->numberOfPeriodsElapsed();
 
-        // si tout le monde pris
-        // si tout le monde a payer pour cette periode
-        // si quelle qu'un a deja pris pour cette periode
-        if ($membersGetContributions == $totalMembers || $currentPeriodPayment != $totalMembers || $membersGetContributions == $periodsElapsed) {
+        // dump($membersGetContributions == $totalMembers);
+        // dump($currentPeriodPayment != $totalMembers);
+        // dump($membersGetContributions == $periodsElapsed);
+
+        // si tout le monde pris la cotisation ou
+        // si la periode en cours n'est pas ecoulé
+        // si tout le monde a payer pour cette periode et quelqu'un a pris ou
+        if ($membersGetContributions == $totalMembers || $membersGetContributions == $periodsElapsed || ($currentPeriodPayment != $totalMembers && $membersGetContributions == $periodsElapsed)) {
             return false;
         }
 

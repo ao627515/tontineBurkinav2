@@ -42,7 +42,7 @@
                                         class="float-right badge bg-info">{{ $tontine->finished_at() }}</span>
                                 </li>
                                 <li class="nav-item py-2 text-center font-title">
-                                    <span>Il reste {{ $tontine->remainingTimeInDays() }} jours</span>
+                                    <span>Il reste {{ $tontine->remainingTimeInDays() }} jours</span><br>
                                     <div class="progress rounded-pill mx-2">
                                         <div class="progress-bar bg-success" role="progressbar" aria-valuenow="25"
                                             aria-valuemin="0" aria-valuemax="100"
@@ -101,14 +101,15 @@
                     <div class="tab-content" id="show-tontine-tabBarContent">
                         <div class="tab-pane fade @if ($page == 'tontine-participants') show active @endif"
                             id="tontine-participants" role="tabpanel" aria-labelledby="tontine-participants-tab">
-                            @if ($tontine->status != 'creating')
+                            @if ($tontine->status != 'creating' && !$tontine->periodeIs(1, 'day'))
                                 <div class="mx-5 mb-5 text-center">
+                                    <span>Periode : {{ $tontine->currentNumberOfPeriods() }}, </span>
                                     <span>Il reste {{ $tontine->remainingTimeInDaysForPay() }} jours pour
-                                        payer</span>
+                                        payer</span><br>
                                     <div class="progress rounded-pill mx-2">
                                         <div class="progress-bar bg-success" role="progressbar" aria-valuenow="25"
                                             aria-valuemin="0" aria-valuemax="100"
-                                            style="width: {{ $tontine->progress() }}%">
+                                            style="width: {{ $tontine->progressForPeriode() }}%">
                                         </div>
                                     </div>
                                 </div>
