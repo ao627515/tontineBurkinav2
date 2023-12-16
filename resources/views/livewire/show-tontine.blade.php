@@ -150,7 +150,7 @@
                                     <div class="card-body">
                                         <div class="row">
                                             @forelse ($tontine->getContributions()->orderBy('created_at', 'desc')->get() as $participant)
-                                                <div class="col-12 col-sm-3 mb-3" wire:key='{{ $participant->id }}'>
+                                                <div class="col-12 col-sm-6 col-md-4 col-lg-4 mb-3" wire:key='{{ $participant->id }}'>
                                                     <x-participant-card :participant='$participant' />
                                                 </div>
                                             @empty

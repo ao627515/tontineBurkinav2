@@ -2,6 +2,7 @@
 
 use App\Livewire\ForgotPassword;
 use App\Livewire\Home;
+use App\Livewire\ListeParticipants;
 use App\Livewire\Login;
 use App\Livewire\Register;
 use App\Livewire\ResetPassword;
@@ -41,5 +42,8 @@ Route::middleware('auth')->group(function () {
 
     // Show Tontine
     Route::get('/tontine/{tontine}', ShowTontine::class)->name('tontine.show');
+
+    //Index participant
+    Route::get('/participants', ListeParticipants::class)->name('participant.index');
 
 });
