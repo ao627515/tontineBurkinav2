@@ -1,4 +1,5 @@
 <div id="show-tontine">
+
     <x-custom.alert />
     <div class="card">
         @if ($tontineInfo)

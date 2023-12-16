@@ -8,8 +8,11 @@ use Livewire\Attributes\Url;
 use App\Livewire\Forms\TontineForm;
 use Livewire\Attributes\Title;
 
+use App\Traits\LogOut;
+
 class Home extends Component
 {
+
     public bool $modalIsOpen = false;
 
     public TontineForm $tontineForm;
@@ -30,9 +33,7 @@ class Home extends Component
         return view('livewire.home',
         [
             'delay_unity' => $delay_unity,
-            'tontines' => Tontine::where('name', 'LIKE', "%{$this->search}%")
-            ->orderBy('created_at', 'desc')
-            ->get()
+            'tontines' => $this->tontines()
         ])->extends('layouts.public');
     }
 
@@ -53,6 +54,13 @@ class Home extends Component
         $this->closeModal();
 
         $this->redirect('/');
+    }
+
+    public function tontines() {
+        return Tontine::where('user_id', auth()->user()->id)
+        ->where('name', 'LIKE', "%{$this->search}%")
+        ->orderBy('created_at', 'desc')
+        ->get();
     }
 
 }

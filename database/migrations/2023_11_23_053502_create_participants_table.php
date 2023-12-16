@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('identity_document_front')->nullable();
             $table->string('identity_document_back')->nullable();
             $table->timestamps();
-            $table->foreignUuid('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignUuid('user_id');
         });
     }
 

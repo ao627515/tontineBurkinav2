@@ -33,7 +33,7 @@ class ShowTontine extends Component
 
     public string $tontineParticipantModal = "add-participant";
 
-    public $started_at ;
+    public $started_at;
 
     public $payments;
 
@@ -50,8 +50,7 @@ class ShowTontine extends Component
     public function boot()
     {
         $this->payments = $this->tontine->payments;
-        if($this->tontine->isStarted())  $this->dispatch('tontineIsStarted')->to('Navbar');
-
+        if ($this->tontine->isStarted())  $this->dispatch('tontineIsStarted')->to('Navbar');
     }
 
     private function showTontine()
@@ -61,16 +60,25 @@ class ShowTontine extends Component
 
     public function render()
     {
-        return view('livewire.show-tontine', [
-            'delay_unity' => ['day' => 'Jour', 'week' => 'Semaine', 'month' => "Mois", 'year' => 'Année'],
-            'allParticipants' => Participant::where('last_name', 'LIKE', "%{$this->searchAddPaticipant}%")
+        return view(
+            'livewire.show-tontine',
+            [
+                'delay_unity' => ['day' => 'Jour', 'week' => 'Semaine', 'month' => "Mois", 'year' => 'Année'],
+                'allParticipants' => $this->allParticipants()
+            ]
+        )
+            ->extends('layouts.public')
+            ->title($this->tontine->name);
+    }
+
+    public function allParticipants()
+    {
+        return  Participant::where('user_id', auth()->user()->id)
+            ->where('last_name', 'LIKE', "%{$this->searchAddPaticipant}%")
             ->orWhere('first_name', 'LIKE', "%{$this->searchAddPaticipant}%")
             ->orWhere('phone_number', 'LIKE', "%{$this->searchAddPaticipant}%")
             ->orderBy('created_at', 'desc')
-            ->get()
-        ])
-            ->extends('layouts.public')
-            ->title($this->tontine->name);
+            ->get();
     }
 
     public function openModal($modal)
@@ -200,18 +208,20 @@ class ShowTontine extends Component
 
         $this->closeModal();
 
-        if($getContribution->count() == $this->tontine->number_of_members) $this->dispatch('tontine-finish')->self();
+        if ($getContribution->count() == $this->tontine->number_of_members) $this->dispatch('tontine-finish')->self();
         // $this->redirectRoute('tontine.show', $this->tontine->id);
     }
 
     #[On('tontine-finish')]
-    public function tontineFinish(){
+    public function tontineFinish()
+    {
         $this->tontine->update([
             'status' => 'completed'
         ]);
     }
 
-    public function cancelTontine(){
+    public function cancelTontine()
+    {
         $this->tontine->update([
             "status" => "suspended",
             "suspension_at" => now(),
@@ -222,7 +232,8 @@ class ShowTontine extends Component
     }
 
     #[On('editTontine')]
-    public function editTontine() {
+    public function editTontine()
+    {
         $this->tontineForm->name = $this->tontine->name;
         $this->tontineForm->profit = $this->tontine->profit;
         $this->tontineForm->delay = $this->tontine->delay;
@@ -234,7 +245,8 @@ class ShowTontine extends Component
     }
 
     #[On('deleteTontine')]
-    public function deleteTontineEvent() {
+    public function deleteTontineEvent()
+    {
         $this->openModal('delete-tontine');
     }
 
@@ -244,7 +256,8 @@ class ShowTontine extends Component
         $this->redirectRoute('tontine.show', $this->tontine->id);
     }
 
-    public function deleteTontine(){
+    public function deleteTontine()
+    {
         $this->tontine->delete();
         session()->flash('success', 'Votre tontine a été supprimé avec succès.');
 

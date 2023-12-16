@@ -76,6 +76,14 @@
                             </p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a wire:click='logout' class="nav-link btn bg-danger">
+                            <i class="nav-icon fas fa-sign-out-alt"></i>
+                            <p>
+                                Déconnexion
+                            </p>
+                        </a>
+                    </li>
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->

@@ -38,7 +38,7 @@ class TontineForm extends Form
             $this->all(),
             [
                 'status' => 'creating',
-                // 'user_id' => auth()->user()->id
+                'user_id' => auth()->user()->id
             ],
         ));
 

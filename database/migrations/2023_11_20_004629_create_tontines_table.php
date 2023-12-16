@@ -26,7 +26,7 @@ return new class extends Migration
             $table->timestamp('suspension_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->foreignUuid('user_id')->nullable()->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignUuid('user_id');
         });
     }
 

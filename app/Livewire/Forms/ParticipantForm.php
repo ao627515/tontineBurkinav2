@@ -33,7 +33,7 @@ class ParticipantForm extends Form
         $participant = Participant::create(array_merge(
             $this->all(),
             [
-                'user_id' => User::first()->id,
+                'user_id' => auth()->user()->id
             ],
         ));
 
