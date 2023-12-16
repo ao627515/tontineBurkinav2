@@ -45,7 +45,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="{{ route('participant.index') }}" class="nav-link @if (Route::is('participant.index')) active @endif" wire:navigate>
                             <i class="nav-icon fas fa-address-book"></i>
                             <p>
                                 Participants

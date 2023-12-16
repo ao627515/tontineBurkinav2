@@ -1,5 +1,5 @@
 <div class="modal show" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" style="display: block;">
-    <div class="modal-dialog @if ($tontineParticipantModal == 'add-participant') modal-dialog-scrollable @endif">
+    <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header d-flex justify-content-center">
                 <h5 wire:click='closeModal' class="modal-title" id="modalLabel"><a role="button"><i
@@ -23,7 +23,7 @@
                         @include('includes.add-tontine-participants')
                     </div>
 
-                    <div id="content2" class="tab-pane fade @if($tontineParticipantModal == 'add-create-participant') show active @endif">
+                    <div id="content2" class="tab-pane px-2 fade @if($tontineParticipantModal == 'add-create-participant') show active @endif">
                         <!-- Contenu de l'onglet 2 -->
                         @include('includes.create-and-add-tontine-participants-from')
                     </div>
