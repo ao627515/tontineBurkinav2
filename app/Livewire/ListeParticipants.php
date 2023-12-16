@@ -2,14 +2,16 @@
 
 namespace App\Livewire;
 
-use App\Livewire\Forms\ParticipantForm;
-use App\Models\Participant;
-use App\Traits\ModalTrait;
 use Livewire\Component;
+use App\Traits\ModalTrait;
+use App\Models\Participant;
+use Livewire\WithFileUploads;
+use Livewire\Attributes\Validate;
+use App\Livewire\Forms\ParticipantForm;
 
 class ListeParticipants extends Component
 {
-    use ModalTrait;
+    use ModalTrait , WithFileUploads;
 
     public $search = '';
 
@@ -17,6 +19,8 @@ class ListeParticipants extends Component
 
     public $participantId = '';
 
+    #[Validate('image|max:1024')] // 1MB Max
+    public $photo;
 
 
     public function render()

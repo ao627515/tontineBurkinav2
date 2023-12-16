@@ -15,7 +15,8 @@
         <div class="card-body">
             <div class="row">
                 @forelse ($participants as $participant)
-                    <div wire:click="edit('{{ $participant->id }}')" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3 d-flex justify-content-center"
+                    <div wire:click="edit('{{ $participant->id }}')"
+                        class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3 d-flex justify-content-center"
                         wire:key='{{ $participant->id }}'>
                         <x-participant-card :participant='$participant' />
                     </div>
@@ -33,6 +34,7 @@
         @case('create-participant')
             @include('includes.create-update-participant-modal')
         @break
+
         @case('delete-participant')
             @include('includes.confirm-delete-participant-modal')
         @break

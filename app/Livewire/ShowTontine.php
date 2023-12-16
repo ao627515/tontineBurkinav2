@@ -6,12 +6,15 @@ use App\Models\Tontine;
 use Livewire\Component;
 use App\Models\Participant;
 use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\DB;
 use App\Livewire\Forms\TontineForm;
 use App\Livewire\Forms\ParticipantForm;
 
 class ShowTontine extends Component
 {
+    use WithFileUploads;
+
     public Tontine $tontine;
 
     public TontineForm $tontineForm;

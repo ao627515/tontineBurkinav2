@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class Participant extends Model
 {
@@ -71,5 +72,15 @@ class Participant extends Model
 
         // Retourner un tableau avec le statut et le type de badge
         return ['status' => $status, 'badgeType' => $badgeType];
+    }
+
+    public function identity_document_front()
+    {
+        return Storage::url($this->identity_document_front);
+    }
+
+    public function identity_document_back()
+    {
+        return Storage::url($this->identity_document_back);
     }
 }
