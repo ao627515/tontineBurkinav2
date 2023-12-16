@@ -45,6 +45,7 @@ class ShowTontine extends Component
     {
         $this->showTontine();
         $this->selected = $this->tontine->participants->pluck('id')->toArray();
+        $this->started_at =  now()->toDateString();
     }
 
     public function boot()
@@ -163,11 +164,10 @@ class ShowTontine extends Component
 
     public function startTontine()
     {
-        $started_at = $this->started_at != "" ? $this->started_at : now();
-        if ($this->tontine->startedDateIsValide($started_at)) {
+        if ($this->tontine->startedDateIsValide($this->started_at)) {
             $this->tontine->update([
                 'status' => 'ongoing',
-                'started_at' => $started_at
+                'started_at' => $this->started_at
             ]);
             session()->flash("success", 'Tontine Démarrer');
         } else {
@@ -262,5 +262,9 @@ class ShowTontine extends Component
         session()->flash('success', 'Votre tontine a été supprimé avec succès.');
 
         $this->redirectRoute('home');
+    }
+
+    public function relauch(){
+
     }
 }

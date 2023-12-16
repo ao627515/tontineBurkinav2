@@ -32,7 +32,8 @@ class Tontine extends Model
         return $this->status == "suspended";
     }
 
-    public function periodeIs(int $delay, string $delayUnity){
+    public function periodeIs(int $delay, string $delayUnity)
+    {
         return $this->delay == $delay && $this->delay_unity;
     }
 
@@ -258,7 +259,7 @@ class Tontine extends Model
 
     public function progressForPeriode()
     {
-        return (($this->timeElapsed() - ($this->delayInDays() * $this->numberOfPeriodsElapsed()))/ $this->delayInDays()) * 100;
+        return (($this->timeElapsed() - ($this->delayInDays() * $this->numberOfPeriodsElapsed())) / $this->delayInDays()) * 100;
     }
 
     public function progressForHour()
@@ -315,18 +316,12 @@ class Tontine extends Model
                 break;
         }
 
-        return $numberOfPeriods;
+        return intdiv($numberOfPeriods, $this->delay);
     }
 
     public function currentNumberOfPeriods()
     {
-        if ($this->numberOfPeriodsElapsed() == 0) {
-            $currrentNumberOfPeriods = 1;
-        } else {
-            $currrentNumberOfPeriods  = $this->numberOfPeriods() - $this->numberOfPeriodsElapsed();
-        }
-
-        return $currrentNumberOfPeriods;
+        return $this->numberOfPeriodsElapsed() == $this->numberOfPeriods() ? $this->numberOfPeriods() : $this->numberOfPeriodsElapsed() + 1;
     }
 
     public function participantGetContributions()
@@ -428,5 +423,4 @@ class Tontine extends Model
         }
         return $currentPeriodPayments;
     }
-
 }
