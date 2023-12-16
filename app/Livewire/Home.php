@@ -53,7 +53,7 @@ class Home extends Component
 
         $this->closeModal();
 
-        $this->redirect('/');
+        $this->redirect('/home');
     }
 
     public function tontines() {
