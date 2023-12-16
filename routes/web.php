@@ -1,8 +1,10 @@
 <?php
 
+use App\Livewire\ForgotPassword;
 use App\Livewire\Home;
 use App\Livewire\Login;
 use App\Livewire\Register;
+use App\Livewire\ResetPassword;
 use App\Livewire\ShowTontine;
 use Illuminate\Support\Facades\Route;
 
@@ -25,13 +27,19 @@ Route::middleware('guest')->group(function () {
     Route::get('/', Login::class)->name('login');
 
     // password.request
+    Route::get('forgot-password', ForgotPassword::class)
+    ->name('password.request');
 
     // password.reset
+    Route::get('reset-password/{token}', ResetPassword::class)
+        ->name('password.reset');
 });
 
 Route::middleware('auth')->group(function () {
+    // Home
     Route::get('/home', Home::class)->name('home');
+
+    // Show Tontine
     Route::get('/tontine/{tontine}', ShowTontine::class)->name('tontine.show');
-    
-    // password.confirm
+
 });

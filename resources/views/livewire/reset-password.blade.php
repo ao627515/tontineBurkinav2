@@ -1,29 +1,29 @@
 <div class="login-page">
     <div class="login-box">
-        <!-- /.login-logo -->
         <div class="card card-outline card-primary">
             <div class="card-header text-center">
                 <a class="h1"><b>Tontine</b>Burkina</a>
             </div>
             <div class="card-body">
-                <p class="login-box-msg">Connexion</p>
-
-                <form wire:submit='login' class="mb-2">
+                <p class="login-box-msg">À un pas de votre nouveau mot de passe, récupérez-le maintenant.</p>
+                <form wire:submit='resetPassword'>
+                    {{-- Email --}}
                     <div class="input-group mb-3">
-                        <input wire:model='phone_number' type="number"
-                            class="form-control @error('phone_number') is-invalid @enderror" name="phone_number"
-                            placeholder="Nom" value="{{ old('phone_number') }}" required>
+                        <input wire:model='email' type="email"
+                            class="form-control @error('email') is-invalid @enderror" name="email" placeholder="Email"
+                            required>
                         <div class="input-group-append">
                             <div class="input-group-text">
-                                <span class="fas fa-phone"></span>
+                                <span class="fas fa-envelope"></span>
                             </div>
                         </div>
-                        @error('phone_number')
+                        @error('email')
                             <div class="invalid-feedback">
                                 {{ $message }}
                             </div>
                         @enderror
                     </div>
+                    {{-- Mot de passe --}}
                     <div class="input-group mb-3">
                         <input wire:model='password' type="password"
                             class="form-control @error('password') is-invalid @enderror" name="password"
@@ -39,33 +39,36 @@
                             </div>
                         @enderror
                     </div>
-                    <div class="row">
-                        <div class="col-8">
-                            <div wire:model='remember' class="icheck-primary">
-                                <input type="checkbox" id="remember" class="form-check-input">
-                                <label for="remember" class="form-check-label">
-                                    Remember Me
-                                </label>
+                    {{-- Confirme le mot de passe --}}
+                    <div class="input-group mb-3">
+                        <input wire:model='password_confirmation' type="password"
+                            class="form-control @error('password_confirmation') is-invalid @enderror"
+                            name="password_confirmation" placeholder="Confirmer le mot de passe" required>
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
                             </div>
                         </div>
-                        <!-- /.col -->
-                        <div class="col-4">
-                            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                        @error('password_confirmation')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-block">Changé de mot de passe</button>
                         </div>
                         <!-- /.col -->
                     </div>
                 </form>
 
-                <p class="mb-1">
-                    <a href="{{ route('password.request') }}" wire:navigate >j'ai oublié mon mot de passe</a>
-                </p>
-                <p class="mb-0">
-                    <a href="{{ route('register') }}" wire:navigate class="text-center">Créer un compte</a>
+                <p class="mt-3 mb-1">
+                    <a href="{{ route('login') }}" wire:navigate >Connexion</a>
                 </p>
             </div>
-            <!-- /.card-body -->
+            <!-- /.login-card-body -->
         </div>
-        <!-- /.card -->
     </div>
     <!-- /.login-box -->
 </div>
