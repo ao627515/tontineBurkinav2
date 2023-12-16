@@ -67,3 +67,10 @@
 #show-tontine .participant-card.active{
     background-color: #ff851b;
 }
+
+#navbar #info-ux{
+    z-index: 1;
+    position: relative;
+    top: 5px;
+    left: 10px;
+}

@@ -12,7 +12,7 @@
                     </div>
                     <div class="card-body bg-light">
                         <ul class="nav flex-column">
-                            <li class="nav-item py-2">
+                            <li class="nav-item py-2 font-title">
                                 Créer le <span
                                     class="float-right badge bg-primary">{{ App\Models\Tontine::dateFormat($tontine->created_at) }}</span>
                             </li>
@@ -102,7 +102,10 @@
                     <div class="tab-content" id="show-tontine-tabBarContent">
                         <div class="tab-pane fade @if ($page == 'tontine-participants') show active @endif"
                             id="tontine-participants" role="tabpanel" aria-labelledby="tontine-participants-tab">
-                            @if ($tontine->status != 'creating' && !$tontine->periodeIs(1, 'day'))
+                            @if (
+                                $tontine->status != 'creating' &&
+                                    !$tontine->periodeIs(1, 'day') &&
+                                    !$tontine->compareDates(now()->toDateString(), '>=', $tontine->finished_at()))
                                 <div class="mx-5 mb-5 text-center">
                                     <span>Periode : {{ $tontine->currentNumberOfPeriods() }}, </span>
                                     <span>Il reste {{ $tontine->remainingTimeInDaysForPay() }} jours pour
@@ -199,6 +202,10 @@
 
         @case('delete-tontine')
             @include('includes.confirm-delete-tontine-modal')
+        @break
+
+        @case('tontine-relaunch')
+            @include('includes.confirm-relaunch-tontine-modal')
         @break
     @endswitch
 </div>

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use InvalidArgumentException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -364,27 +365,59 @@ class Tontine extends Model
     //     return $can;
     // }
 
-    // V3
+    // // V3
+    // public function canGetContribution()
+    // {
+    //     $membersGetContributions = $this->getContributions->count();
+    //     $totalMembers = $this->number_of_members;
+    //     $currentPeriodPayment = $this->getPeriodePayment();
+    //     $periodsElapsed = $this->numberOfPeriodsElapsed();
+
+    //     // dump($membersGetContributions == $totalMembers);
+    //     // dump($currentPeriodPayment != $totalMembers);
+    //     // dump($membersGetContributions == $periodsElapsed);
+
+    //     // si tout le monde pris la cotisation ou
+    //     // si la periode en cours n'est pas ecoulé
+    //     // si tout le monde a payer pour cette periode et quelqu'un a pris ou
+    //     if ($membersGetContributions == $totalMembers || $membersGetContributions == $periodsElapsed || ($currentPeriodPayment != $totalMembers && $membersGetContributions == $periodsElapsed)) {
+    //         return false;
+    //     }
+
+    //     return true;
+    // }
+
     public function canGetContribution()
     {
         $membersGetContributions = $this->getContributions->count();
         $totalMembers = $this->number_of_members;
         $currentPeriodPayment = $this->getPeriodePayment();
         $periodsElapsed = $this->numberOfPeriodsElapsed();
+        $currentPeriod = $this->currentNumberOfPeriods();
 
-        // dump($membersGetContributions == $totalMembers);
-        // dump($currentPeriodPayment != $totalMembers);
-        // dump($membersGetContributions == $periodsElapsed);
 
-        // si tout le monde pris la cotisation ou
-        // si la periode en cours n'est pas ecoulé
-        // si tout le monde a payer pour cette periode et quelqu'un a pris ou
-        if ($membersGetContributions == $totalMembers || $membersGetContributions == $periodsElapsed || ($currentPeriodPayment != $totalMembers && $membersGetContributions == $periodsElapsed)) {
-            return false;
+        // Déterminez la durée de chaque période
+        $dureeParPeriode = $this->delayInDays();
+        $started_at = Carbon::parse($this->started_at);
+        // $finPeriode = $started_at->addDays($dureeParPeriode * $currentPeriod);
+
+        // $periodIsElapsed = $this->compareDates(now(), '>=', $finPeriode);
+
+        /**
+         *  Si tout le monde a payer a une periode et
+         *  Si personne n'a pris la cotisation et
+         * Si la periode actuelle est ecoulé
+         */
+
+        for ($i = 1; $i <= $periodsElapsed; $i++) {
+            if ($this->getPeriodePayment($i) == $totalMembers && $membersGetContributions < $i && $this->compareDates(now(), '>=', $started_at->copy()->addDays($dureeParPeriode * $i))) {
+                return true;
+            }
         }
 
-        return true;
+        return false;
     }
+
     // V2
     // public function canGetContribution()
     // {
@@ -421,6 +454,58 @@ class Tontine extends Model
                 }
             }
         }
+        // dump($currentPeriodPayments);
         return $currentPeriodPayments;
+    }
+
+
+    // public function compareDatesWithOperator(Carbon $date1, Carbon $date2, string $operateur)
+    // {
+
+    //     $date1 = Carbon::parse($date1);
+    //     $date2 = Carbon::parse($date2);
+
+    //     switch ($operateur) {
+    //         case '>':
+    //             return $date1->gt($date2);
+    //         case '>=':
+    //             return $date1->gte($date2);
+    //         case '<':
+    //             return $date1->lt($date2);
+    //         case '<=':
+    //             return $date1->lte($date2);
+    //         case '==':
+    //             return $date1->eq($date2);
+    //         default:
+    //             throw new InvalidArgumentException("Opérateur non supporté : $operateur");
+    //     }
+    // }
+
+    public function compareDates(string|Carbon $date1, string $operateur, string|Carbon $date2)
+    {
+        if (!($date1 instanceof Carbon)) {
+            $date1 = Carbon::parse($date1);
+        } elseif (!($date2 instanceof Carbon)) {
+            $date2 = Carbon::parse($date2);
+        }else{
+            $date1 = Carbon::parse($date1);
+            $date2 = Carbon::parse($date2);
+        }
+
+
+        switch ($operateur) {
+            case '>':
+                return $date1->gt($date2);
+            case '>=':
+                return $date1->gte($date2);
+            case '<':
+                return $date1->lt($date2);
+            case '<=':
+                return $date1->lte($date2);
+            case '==':
+                return $date1->eq($date2);
+            default:
+                throw new InvalidArgumentException("Opérateur non supporté : $operateur");
+        }
     }
 }

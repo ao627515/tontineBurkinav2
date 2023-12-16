@@ -228,7 +228,10 @@ class ShowTontine extends Component
             'suspension_reason' => $this->suspension_reason
         ]);
         $this->closeModal();
+
         $this->reset('suspension_reason');
+        session()->flash('success', 'Tontine annuler');
+        $this->redirectRoute('tontine.show', $this->tontine->id);
     }
 
     #[On('editTontine')]
@@ -264,7 +267,22 @@ class ShowTontine extends Component
         $this->redirectRoute('home');
     }
 
-    public function relauch(){
+    public function relaunch()
+    {
 
+        $tontine =  $this->tontine->replicate(['status', 'suspension_at', 'started_at', 'suspension_reason', 'deleted_at']);
+        $tontineCount = Tontine::where('name', $tontine->name)->count() + 1;
+        $tontine->name = $tontine->name. " {$tontineCount}";
+        $tontine->save();
+        $participants = $this->tontine->participants()->orderByPivot('assigned_rank')->pluck('participant_id');
+        $ranks = range(1, $participants->count());
+
+        foreach ($participants as $index => $participantId) {
+            $tontine->participants()->attach($participantId, ['assigned_rank' => $ranks[$index]]);
+        }
+
+        session()->flash('success', 'Bienvenue dans votre nouvelle tontine');
+
+        $this->redirectRoute('tontine.show', $tontine->id);
     }
 }

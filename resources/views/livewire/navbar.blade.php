@@ -1,5 +1,5 @@
 <!-- Navbar -->
-<nav class="main-header navbar navbar-expand navbar-white navbar-light">
+<nav class="main-header navbar navbar-expand navbar-white navbar-light" id="navbar">
     <!-- Left navbar links -->
     <ul class="navbar-nav">
         <li class="nav-item">
@@ -23,7 +23,7 @@
         <ul class="navbar-nav w-25 d-flex @if(!$tontineIsStarted)  justify-content-around @else justify-content-end  @endif">
             <li wire:click='openTontineInfo' class="nav-item w-25">
                 @if (!$tontineInfoIsOpen)
-                    <div class="rounded-circle p-1 bg-danger" style="height: 10px; width:10px;"></div>
+                    <div class="rounded-circle p-1 bg-danger" id="info-ux" style="height: 5px; width:5px;"></div>
                 @endif
                 <i class="fa-solid fa-circle-info font-title"></i>
             </li>
