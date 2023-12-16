@@ -23,15 +23,15 @@
         <ul class="navbar-nav w-25 d-flex @if(!$tontineIsStarted)  justify-content-around @else justify-content-end  @endif">
             <li wire:click='openTontineInfo' class="nav-item w-25">
                 @if (!$tontineInfoIsOpen)
-                    <div class="rounded-circle p-1 bg-danger" id="info-ux" style="height: 5px; width:5px;"></div>
+                    <div class="rounded-circle bg-danger" id="info-ux" style="height: 8px; width: 8px;"></div>
                 @endif
-                <i class="fa-solid fa-circle-info font-title"></i>
+                <i class="fa-solid fa-circle-info font-title "></i>
             </li>
             @if (!$tontineIsStarted)
                 <li wire:click='editTontine' class="nav-item w-25"><i class="fa-solid fa-pen font-title"></i></li>
                 <li wire:click='deleteTontine' class="nav-item w-25"><i class="fa-solid fa-trash font-title"></i></li>
             @endif
-            <li class="nav-item w-25"><i class="fa-solid fa-bell font-title"></i></li>
+            <li class="nav-item w-25"><i class="fa-solid fa-bell font-title @if (!$tontineInfoIsOpen) mt-2 @endif"></i></li>
         </ul>
     @endif
 </nav>

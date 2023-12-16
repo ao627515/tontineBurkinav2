@@ -24,13 +24,13 @@
             </button>
         {{-- Page des contributions --}}
         @elseif ($page == 'tontine-contributions')
-            <button class="btn btn-danger mr-3" wire:click="openModal('cancel-tontine')">
+            <button class="btn btn-danger" wire:click="openModal('cancel-tontine')">
                 <i class="fas fa-times mr-2"></i>Annuler
             </button>
             {{-- Bouton de validation des contributions si autorisé --}}
             @if ($tontine->canGetContribution())
                 <button class="btn btn-success" wire:click="openModal('get-contributions')">
-                    <i class="fas fa-check mr-2"></i>Valider
+                    <i class="fas fa-check mx-2"></i>Valider
                 </button>
             @endif
         @endif
